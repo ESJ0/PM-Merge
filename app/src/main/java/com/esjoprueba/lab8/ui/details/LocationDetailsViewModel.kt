@@ -3,8 +3,8 @@ package com.esjoprueba.lab8.ui.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.esjoprueba.lab8.data.CharacterDb
-import com.esjoprueba.lab8.ui.states.CharacterDetailsUiState
+import com.esjoprueba.lab8.data.LocationDb
+import com.esjoprueba.lab8.ui.states.LocationDetailsUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,44 +12,44 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class CharacterDetailsViewModel(
+class LocationDetailsViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CharacterDetailsUiState())
-    val uiState: StateFlow<CharacterDetailsUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(LocationDetailsUiState())
+    val uiState: StateFlow<LocationDetailsUiState> = _uiState.asStateFlow()
 
     init {
-        loadCharacterDetails()
+        loadLocationDetails()
     }
 
-    private fun loadCharacterDetails() {
+    private fun loadLocationDetails() {
         viewModelScope.launch {
-            _uiState.value = CharacterDetailsUiState(isLoading = true)
+            _uiState.value = LocationDetailsUiState(isLoading = true)
 
             // Simular loading de 2 segundos
             delay(2000)
 
             // Obtener ID del SavedStateHandle
-            val characterId = savedStateHandle.get<String>("characterId")?.toIntOrNull()
+            val locationId = savedStateHandle.get<String>("locationId")?.toIntOrNull()
 
             // Generar número aleatorio del 1 al 10
             val randomNumber = Random.nextInt(1, 11)
 
             if (randomNumber % 2 == 0) {
                 // Número par - mostrar data
-                val character = if (characterId != null) {
-                    CharacterDb.getCharacterById(characterId)
+                val location = if (locationId != null) {
+                    LocationDb.getLocationById(locationId)
                 } else null
 
-                _uiState.value = CharacterDetailsUiState(
+                _uiState.value = LocationDetailsUiState(
                     isLoading = false,
-                    data = character,
+                    data = location,
                     hasError = false
                 )
             } else {
                 // Número impar - mostrar error
-                _uiState.value = CharacterDetailsUiState(
+                _uiState.value = LocationDetailsUiState(
                     isLoading = false,
                     data = null,
                     hasError = true
@@ -59,6 +59,6 @@ class CharacterDetailsViewModel(
     }
 
     fun retry() {
-        loadCharacterDetails()
+        loadLocationDetails()
     }
 }

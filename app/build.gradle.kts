@@ -37,8 +37,8 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
         freeCompilerArgs += listOf(
-            "-opt-in=kotlinx.serialization.InternalSerializationApi",
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+            // Removimos la línea de InternalSerializationApi
         )
     }
     buildFeatures {

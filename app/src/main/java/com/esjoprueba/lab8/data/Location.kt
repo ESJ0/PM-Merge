@@ -3,11 +3,9 @@ package com.esjoprueba.lab8.data
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Character(
+data class Location(
     val id: Int,
     val name: String,
-    val status: String,
-    val species: String,
-    val gender: String,
-    val image: String
+    val type: String,
+    val dimension: String
 )

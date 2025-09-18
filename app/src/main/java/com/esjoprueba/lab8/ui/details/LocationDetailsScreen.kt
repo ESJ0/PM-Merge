@@ -1,20 +1,16 @@
 package com.esjoprueba.lab8.ui.details
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,38 +23,26 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.SubcomposeAsyncImageContent
-import com.esjoprueba.lab8.data.Character
+import com.esjoprueba.lab8.data.Location
 import com.esjoprueba.lab8.ui.components.ErrorScreen
 import com.esjoprueba.lab8.ui.components.LoadingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CharacterDetailsScreen(
-    characterId: Int?,
+fun LocationDetailsScreen(
+    locationId: Int?,
     onBackClick: () -> Unit,
-    viewModel: CharacterDetailsViewModel = viewModel()
+    viewModel: LocationDetailsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        "Character Details",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                },
+                title = { Text("Location details") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -72,12 +56,12 @@ fun CharacterDetailsScreen(
     ) { innerPadding ->
         when {
             uiState.isLoading -> {
-                LoadingScreen(message = "Cargando detalles del personaje...")
+                LoadingScreen(message = "Cargando detalles de la ubicación...")
             }
 
             uiState.hasError -> {
                 ErrorScreen(
-                    message = "Error al cargar los detalles del personaje",
+                    message = "Error al cargar los detalles de la ubicación",
                     onRetry = { viewModel.retry() }
                 )
             }
@@ -90,15 +74,15 @@ fun CharacterDetailsScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "Character not found",
+                        "Location not found",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
 
             else -> {
-                CharacterDetails(
-                    character = uiState.data!!,
+                LocationDetails(
+                    location = uiState.data!!,
                     modifier = Modifier.padding(innerPadding)
                 )
             }
@@ -107,8 +91,8 @@ fun CharacterDetailsScreen(
 }
 
 @Composable
-fun CharacterDetails(
-    character: Character,
+fun LocationDetails(
+    location: Location,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -118,36 +102,6 @@ fun CharacterDetails(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // Imagen del personaje
-        SubcomposeAsyncImage(
-            model = character.image,
-            contentDescription = character.name,
-            modifier = Modifier
-                .size(200.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        ) {
-            val state = painter.state
-            if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-                Box(
-                    modifier = Modifier
-                        .size(200.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (state is AsyncImagePainter.State.Loading) {
-                        CircularProgressIndicator(modifier = Modifier.size(48.dp))
-                    } else {
-                        Text("❌", fontSize = 40.sp)
-                    }
-                }
-            } else {
-                SubcomposeAsyncImageContent()
-            }
-        }
-
-        // Información del personaje
         Card(
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -157,21 +111,10 @@ fun CharacterDetails(
                 modifier = Modifier.padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                DetailItem("Name", character.name, isImportant = true)
-
-                DetailItem("Status", character.status,
-                    statusColor = when (character.status.lowercase()) {
-                        "alive" -> Color(0xFF4CAF50) // Verde
-                        "dead" -> Color(0xFFF44336)  // Rojo
-                        else -> Color(0xFF9E9E9E)    // Gris
-                    }
-                )
-
-                DetailItem("Species", character.species)
-                DetailItem("Gender", character.gender)
-
-                // ID del personaje
-                DetailItem("ID", character.id.toString())
+                DetailItem("ID", location.id.toString(), isImportant = true)
+                DetailItem("Name", location.name, isImportant = true)
+                DetailItem("Type", location.type)
+                DetailItem("Dimension", location.dimension)
             }
         }
     }
@@ -181,13 +124,9 @@ fun CharacterDetails(
 fun DetailItem(
     label: String,
     value: String,
-    isImportant: Boolean = false,
-    statusColor: Color? = null
+    isImportant: Boolean = false
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
+    Column {
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
@@ -200,7 +139,7 @@ fun DetailItem(
             } else {
                 MaterialTheme.typography.bodyLarge
             },
-            color = statusColor ?: MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

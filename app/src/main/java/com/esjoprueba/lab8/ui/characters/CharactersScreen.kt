@@ -1,13 +1,11 @@
 package com.esjoprueba.lab8.ui.characters
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,7 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,87 +37,92 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.esjoprueba.lab8.data.Character
-import com.esjoprueba.lab8.data.CharacterDb
+import com.esjoprueba.lab8.ui.components.ErrorScreen
+import com.esjoprueba.lab8.ui.components.LoadingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharactersScreen(
-    onCharacterClick: (Int) -> Unit
+    onCharacterClick: (Int) -> Unit,
+    viewModel: CharactersViewModel = viewModel()
 ) {
-    var characters by remember { mutableStateOf(emptyList<Character>()) }
-    var isLoading by remember { mutableStateOf(true) }
+    val uiState by viewModel.uiState.collectAsState()
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
-
-    LaunchedEffect(Unit) {
-        characters = CharacterDb.getCharacters()
-        isLoading = false
-    }
-
-    val filteredCharacters = if (searchText.text.isEmpty()) {
-        characters
-    } else {
-        characters.filter { character ->
-            character.name.contains(searchText.text, ignoreCase = true) ||
-                    character.species.contains(searchText.text, ignoreCase = true) ||
-                    character.status.contains(searchText.text, ignoreCase = true)
-        }
-    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Characters (${filteredCharacters.size})") }
+                title = {
+                    Text("Characters ${if (!uiState.isLoading && !uiState.hasError) "(${uiState.data.size})" else ""}")
+                }
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            // Barra de búsqueda
-            OutlinedTextField(
-                value = searchText,
-                onValueChange = { searchText = it },
-                placeholder = { Text("Search characters...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(12.dp)
-            )
+        when {
+            uiState.isLoading -> {
+                LoadingScreen(message = "Cargando personajes...")
+            }
 
-            if (isLoading) {
-                Box(
+            uiState.hasError -> {
+                ErrorScreen(
+                    message = "Error al cargar los personajes",
+                    onRetry = { viewModel.retry() }
+                )
+            }
+
+            else -> {
+                val filteredCharacters = if (searchText.text.isEmpty()) {
+                    uiState.data
+                } else {
+                    uiState.data.filter { character ->
+                        character.name.contains(searchText.text, ignoreCase = true) ||
+                                character.species.contains(searchText.text, ignoreCase = true) ||
+                                character.status.contains(searchText.text, ignoreCase = true)
+                    }
+                }
+
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
+                        .padding(innerPadding)
                 ) {
-                    CircularProgressIndicator()
-                }
-            } else if (filteredCharacters.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No characters found", style = MaterialTheme.typography.bodyLarge)
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    items(filteredCharacters) { character ->
-                        CharacterItem(
-                            character = character,
-                            onClick = { onCharacterClick(character.id) }
-                        )
+                    // Barra de búsqueda
+                    OutlinedTextField(
+                        value = searchText,
+                        onValueChange = { searchText = it },
+                        placeholder = { Text("Search characters...") },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+
+                    if (filteredCharacters.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .weight(1f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("No characters found", style = MaterialTheme.typography.bodyLarge)
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            items(filteredCharacters) { character ->
+                                CharacterItem(
+                                    character = character,
+                                    onClick = { onCharacterClick(character.id) }
+                                )
+                            }
+                        }
                     }
                 }
             }
