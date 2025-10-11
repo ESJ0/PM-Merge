@@ -1,5 +1,6 @@
 package com.esjoprueba.lab8.data
 
+//Jose Abril
 object CharacterDb {
     private val characters = listOf(
         Character(1, "Rick Sanchez", "Alive", "Human", "Male", "https://rickandmortyapi.com/api/character/avatar/1.jpeg"),
