@@ -84,6 +84,20 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
+    // --- DataStore Preferences (NUEVO - para guardar el nombre del usuario) ---
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // --- Lifecycle ViewModel Compose (NUEVO - para ViewModelFactory) ---
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+
+    // --- Coroutines (NUEVO - asegurar compatibilidad) ---
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
+    // --- Activity Compose (actualizada para BackHandler) ---
+    implementation("androidx.activity:activity-compose:1.8.2")
+
     // --- Testing ---
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

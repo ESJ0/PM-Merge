@@ -1,5 +1,6 @@
 package com.esjoprueba.lab8.ui.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -21,6 +23,7 @@ import com.esjoprueba.lab8.ui.profile.ProfileScreen
 @Composable
 fun MainScreen(onLogout: () -> Unit) {
     val navController = rememberNavController()
+    val context = LocalContext.current
     var selectedItem by remember { mutableIntStateOf(0) }
 
     val items = listOf(
@@ -28,6 +31,12 @@ fun MainScreen(onLogout: () -> Unit) {
         LocationsRoute.route,
         ProfileRoute.route
     )
+
+    // Manejar el back button cuando estamos en la lista de personajes
+    BackHandler(enabled = navController.currentDestination?.route == CharactersRoute.route) {
+        // Cerrar la aplicación
+        (context as? androidx.activity.ComponentActivity)?.finish()
+    }
 
     Scaffold(
         bottomBar = {
@@ -49,9 +58,15 @@ fun MainScreen(onLogout: () -> Unit) {
                         onClick = {
                             selectedItem = index
                             when (index) {
-                                0 -> navController.navigate(CharactersRoute.route)
-                                1 -> navController.navigate(LocationsRoute.route)
-                                2 -> navController.navigate(ProfileRoute.route)
+                                0 -> navController.navigate(CharactersRoute.route) {
+                                    popUpTo(CharactersRoute.route) { inclusive = true }
+                                }
+                                1 -> navController.navigate(LocationsRoute.route) {
+                                    popUpTo(CharactersRoute.route)
+                                }
+                                2 -> navController.navigate(ProfileRoute.route) {
+                                    popUpTo(CharactersRoute.route)
+                                }
                             }
                         }
                     )

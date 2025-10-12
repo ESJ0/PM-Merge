@@ -13,4 +13,7 @@ interface LocationDao {
 
     @Query("SELECT * FROM locations")
     suspend fun getAll(): List<Location>
+
+    @Query("SELECT * FROM locations WHERE id = :id")
+    suspend fun getById(id: Int): Location?
 }

@@ -1,5 +1,6 @@
 package com.esjoprueba.lab8.navigation
 
+import android.annotation.SuppressLint
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -27,11 +28,13 @@ object ProfileRoute {
     const val route = "profile"
 }
 
+@SuppressLint("UnsafeOptInUsageError")
 @Serializable
 data class CharacterDetailsRoute(val characterId: Int) {
     fun toRoute(): String = "character_details/$characterId"
 }
 
+@SuppressLint("UnsafeOptInUsageError")
 @Serializable
 data class LocationDetailsRoute(val locationId: Int) {
     fun toRoute(): String = "location_details/$locationId"
