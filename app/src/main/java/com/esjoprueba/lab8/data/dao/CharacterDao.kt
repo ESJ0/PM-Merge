@@ -1,3 +1,4 @@
+
 package com.esjoprueba.lab8.data.dao
 
 import androidx.room.Dao
@@ -13,4 +14,7 @@ interface CharacterDao {
 
     @Query("SELECT * FROM characters")
     suspend fun getAll(): List<Character>
+
+    @Query("SELECT * FROM characters WHERE id = :id")
+    suspend fun getById(id: Int): Character?
 }

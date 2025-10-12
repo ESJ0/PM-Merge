@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,7 +50,9 @@ import com.esjoprueba.lab8.ui.components.LoadingScreen
 @Composable
 fun CharactersScreen(
     onCharacterClick: (Int) -> Unit,
-    viewModel: CharactersViewModel = viewModel()
+    viewModel: CharactersViewModel = viewModel(
+        factory = CharactersViewModelFactory(LocalContext.current)
+    )
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var searchText by remember { mutableStateOf(TextFieldValue("")) }

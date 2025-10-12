@@ -23,8 +23,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.esjoprueba.lab8.data.Location
 import com.esjoprueba.lab8.ui.components.ErrorScreen
@@ -34,9 +36,16 @@ import com.esjoprueba.lab8.ui.components.LoadingScreen
 @Composable
 fun LocationDetailsScreen(
     locationId: Int?,
-    onBackClick: () -> Unit,
-    viewModel: LocationDetailsViewModel = viewModel()
+    onBackClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val savedStateHandle = SavedStateHandle()
+    savedStateHandle["locationId"] = locationId.toString()
+
+    val viewModel: LocationDetailsViewModel = viewModel(
+        factory = LocationDetailsViewModelFactory(context, savedStateHandle)
+    )
+
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
@@ -111,17 +120,17 @@ fun LocationDetails(
                 modifier = Modifier.padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                DetailItem("ID", location.id.toString(), isImportant = true)
-                DetailItem("Name", location.name, isImportant = true)
-                DetailItem("Type", location.type)
-                DetailItem("Dimension", location.dimension)
+                LocationDetailItem("ID", location.id.toString(), isImportant = true)
+                LocationDetailItem("Name", location.name, isImportant = true)
+                LocationDetailItem("Type", location.type)
+                LocationDetailItem("Dimension", location.dimension)
             }
         }
     }
 }
 
 @Composable
-fun DetailItem(
+fun LocationDetailItem(
     label: String,
     value: String,
     isImportant: Boolean = false

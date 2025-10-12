@@ -30,10 +30,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
+//import androidx.savedstate.compose.LocalSavedStateRegistryOwner
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
@@ -45,9 +48,16 @@ import com.esjoprueba.lab8.ui.components.LoadingScreen
 @Composable
 fun CharacterDetailsScreen(
     characterId: Int?,
-    onBackClick: () -> Unit,
-    viewModel: CharacterDetailsViewModel = viewModel()
+    onBackClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val savedStateHandle = SavedStateHandle()
+    savedStateHandle["characterId"] = characterId.toString()
+
+    val viewModel: CharacterDetailsViewModel = viewModel(
+        factory = CharacterDetailsViewModelFactory(context, savedStateHandle)
+    )
+
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
@@ -161,16 +171,14 @@ fun CharacterDetails(
 
                 DetailItem("Status", character.status,
                     statusColor = when (character.status.lowercase()) {
-                        "alive" -> Color(0xFF4CAF50) // Verde
-                        "dead" -> Color(0xFFF44336)  // Rojo
-                        else -> Color(0xFF9E9E9E)    // Gris
+                        "alive" -> Color(0xFF4CAF50)
+                        "dead" -> Color(0xFFF44336)
+                        else -> Color(0xFF9E9E9E)
                     }
                 )
 
                 DetailItem("Species", character.species)
                 DetailItem("Gender", character.gender)
-
-                // ID del personaje
                 DetailItem("ID", character.id.toString())
             }
         }
