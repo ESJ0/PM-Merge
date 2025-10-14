@@ -1,18 +1,18 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
     id("com.google.devtools.ksp") version "1.9.22-1.0.16"
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
     namespace = "com.esjoprueba.lab8"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.esjoprueba.lab8"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = 26
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -70,35 +70,36 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.5")
+    //implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.navigation:navigation-compose:2.8.3")
 
     // Coil para carga de imágenes
     implementation("io.coil-kt:coil-compose:2.5.0")
 
     // Kotlin Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-    // --- ROOM (Persistencia local con corrutinas y KSP) ---
+    // ROOM (Persistencia local con corrutinas y KSP)
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
-    // --- DataStore Preferences (NUEVO - para guardar el nombre del usuario) ---
+    // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    // --- Lifecycle ViewModel Compose (NUEVO - para ViewModelFactory) ---
+    // Lifecycle ViewModel Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
-    // --- Coroutines (NUEVO - asegurar compatibilidad) ---
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-    // --- Activity Compose (actualizada para BackHandler) ---
+    // Activity Compose (actualizada para BackHandler)
     implementation("androidx.activity:activity-compose:1.8.2")
 
-    // --- Testing ---
+    // Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

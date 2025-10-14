@@ -1,41 +1,24 @@
 package com.esjoprueba.lab8.navigation
 
-import android.annotation.SuppressLint
 import kotlinx.serialization.Serializable
 
 @Serializable
-object LoginRoute {
-    const val route = "login"
-}
+object LoginRoute
 
 @Serializable
-object MainRoute {
-    const val route = "main"
-}
+object MainRoute
 
 @Serializable
-object CharactersRoute {
-    const val route = "characters"
-}
+object CharactersRoute
 
 @Serializable
-object LocationsRoute {
-    const val route = "locations"
-}
+object LocationsRoute
 
 @Serializable
-object ProfileRoute {
-    const val route = "profile"
-}
+object ProfileRoute
 
-@SuppressLint("UnsafeOptInUsageError")
 @Serializable
-data class CharacterDetailsRoute(val characterId: Int) {
-    fun toRoute(): String = "character_details/$characterId"
-}
+data class CharacterDetailsRoute(val characterId: Int)
 
-@SuppressLint("UnsafeOptInUsageError")
 @Serializable
-data class LocationDetailsRoute(val locationId: Int) {
-    fun toRoute(): String = "location_details/$locationId"
-}
+data class LocationDetailsRoute(val locationId: Int)

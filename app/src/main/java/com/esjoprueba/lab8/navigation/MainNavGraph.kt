@@ -22,19 +22,19 @@ fun MainNavGraph() {
 
     // Verificar si el usuario ya está loggeado al iniciar
     LaunchedEffect(userName) {
-        if (userName != null && navController.currentDestination?.route == LoginRoute.route) {
-            navController.navigate(MainRoute.route) {
-                popUpTo(LoginRoute.route) { inclusive = true }
+        if (userName != null && navController.currentDestination?.route == LoginRoute::class.qualifiedName) {
+            navController.navigate(MainRoute) {
+                popUpTo<LoginRoute> { inclusive = true }
             }
         }
     }
 
     NavHost(
         navController = navController,
-        startDestination = LoginRoute.route
+        startDestination = LoginRoute
     ) {
         // Pantalla de login
-        composable(LoginRoute.route) {
+        composable<LoginRoute> {
             // Evitar que el usuario regrese desde el login si ya cerró sesión
             BackHandler {
                 // Cerrar la aplicación
@@ -43,19 +43,19 @@ fun MainNavGraph() {
 
             LoginScreen(
                 onStartClick = {
-                    navController.navigate(MainRoute.route) {
-                        popUpTo(LoginRoute.route) { inclusive = true }
+                    navController.navigate(MainRoute) {
+                        popUpTo<LoginRoute> { inclusive = true }
                     }
                 }
             )
         }
 
         // Pantalla principal
-        composable(MainRoute.route) {
+        composable<MainRoute> {
             MainScreen(
                 onLogout = {
-                    navController.navigate(LoginRoute.route) {
-                        popUpTo(MainRoute.route) { inclusive = true }
+                    navController.navigate(LoginRoute) {
+                        popUpTo<MainRoute> { inclusive = true }
                     }
                 }
             )
