@@ -14,12 +14,12 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 class UserPreferencesRepository(private val context: Context) {
 
-    private val USER_NAME_KEY = stringPreferencesKey("user_name")
+    private val USER_NAME_KEY = xstringPreferencesKey("user_name")
 
     val userName: Flow<String?> = context.dataStore.data.map { preferences ->
         preferences[USER_NAME_KEY]
     }
-
+    
     suspend fun saveUserName(name: String) {
         context.dataStore.edit { preferences ->
             preferences[USER_NAME_KEY] = name

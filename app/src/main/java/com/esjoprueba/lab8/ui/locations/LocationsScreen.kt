@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.esjoprueba.lab8.data.Location
@@ -28,7 +29,9 @@ import com.esjoprueba.lab8.ui.components.LoadingScreen
 @Composable
 fun LocationsScreen(
     onLocationClick: (Int) -> Unit,
-    viewModel: LocationsViewModel = viewModel()
+    viewModel: LocationsViewModel = viewModel(
+        factory = LocationsViewModelFactory(LocalContext.current)
+    )
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

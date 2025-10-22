@@ -36,21 +36,23 @@ class LocationsViewModel(
             val randomNumber = Random.nextInt(1, 11)
 
             if (randomNumber % 2 == 0) {
-                // Número par - mostrar data desde Room
-                try {
-                    val locations = locationRepository.getAllLocations()
-                    _uiState.value = LocationsUiState(
-                        isLoading = false,
-                        data = locations,
-                        hasError = false
-                    )
-                } catch (_: Exception) {
-                    _uiState.value = LocationsUiState(
-                        isLoading = false,
-                        data = emptyList(),
-                        hasError = true
-                    )
-                }
+                // Número par - intentar cargar data (Offline First)
+                locationRepository.getAllLocations().fold(
+                    onSuccess = { locations ->
+                        _uiState.value = LocationsUiState(
+                            isLoading = false,
+                            data = locations,
+                            hasError = false
+                        )
+                    },
+                    onFailure = { exception ->
+                        _uiState.value = LocationsUiState(
+                            isLoading = false,
+                            data = emptyList(),
+                            hasError = true
+                        )
+                    }
+                )
             } else {
                 // Número impar - mostrar error
                 _uiState.value = LocationsUiState(
